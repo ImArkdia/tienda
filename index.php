@@ -8,13 +8,19 @@
         echo $dwes->connect_error;
         exit();
     }
+    $actualizado = "";
+
+    if(isset($_GET['actualizado'])){
+        $actualizado = 'Se ha actualizado el stock correctamente.';
+    }
 
     $query = "SELECT * FROM producto";
     $resultado = $dwes->query($query, MYSQLI_USE_RESULT);
     if($resultado->num_rows < 0){
         echo 'No hay productos almacenados.';
     }else{
-        echo '<h1>Listado de productos</h1><br><br>';
+        echo '<h1>Listado de productos</h1><br><br>
+            '.$actualizado.'<br><br>';
         echo '<table><tr>
                 <th>Código</th>
                 <th>Nombre</th>
