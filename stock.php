@@ -7,30 +7,23 @@
         echo $dwes->connect_error;
         exit();
     }
-
+    $dwes->autocommit(false);
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $cod = $_GET['cod'];
         unset($_POST['cod']);
         $keys = array_keys($_POST);
-        $values = array_values($_POST); // Simplificamos la obtención de los valores
+        $values = array_values($_POST);
         
         for ($i = 0; $i < count($keys); $i++) {
             $unidades = $values[$i];
             $tiendas = $keys[$i];
         
-            // Prepara la consulta y enlaza los parámetros
             $preparedDwes = $dwes->prepare('UPDATE stock SET unidades=? WHERE producto=? AND tienda=?');
-            $preparedDwes->bind_param('iss', $unidades, $cod, $tiendas);
-        
-            // Ejecuta la consulta y verifica si ocurrió algún error
-            if ($preparedDwes->execute() === false) {
-                die('Error en la actualización: ' . $preparedDwes->error);
-            }
-        
+            $preparedDwes->bind_param('isi', $unidades, $cod, $tiendas);
+            $preparedDwes->execute();
             $preparedDwes->close();
         }
-        
-        // Cierra la conexión a la base de datos al final
+        $dwes->commit();
         $dwes->close();
         header("Location: ./index.php?actualizado=true");
         exit();
